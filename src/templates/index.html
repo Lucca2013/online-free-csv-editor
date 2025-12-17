@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Free Online CSV Editor | Excel-Style Spreadsheet</title>
+  <meta name="description" content="Free online CSV editor. Edit CSV files like in Excel directly in your browser." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #217346;
+      --primary-hover: #1e8e5a;
+      --bg-light: #f8fafc;
+      --text-main: #1e293b;
+      --border-color: #e2e8f0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      margin: 0;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* --- Header & Hero Section --- */
+    header {
+      background: linear-gradient(135deg, #217346 0%, #154c2e 100%);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+      margin-bottom: -40px;
+      /* Sobreposição para o editor */
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0 0 10px 0;
+      font-weight: 700;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* --- Editor UI --- */
+    main {
+      padding: 0 20px 40px;
+    }
+
+    .editor-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      background: #f1f5f9;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .toolbar button,
+    .file-upload {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      border: 1px solid #cbd5e1;
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .toolbar button:hover,
+    .file-upload:hover {
+      background: #f8fafc;
+      border-color: var(--primary);
+    }
+
+    .toolbar button.primary-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .toolbar button.primary-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .toolbar button.danger {
+      color: #dc2626;
+    }
+
+    .toolbar button.danger:hover {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    /* --- Table Styling --- */
+    .table-container {
+      overflow: auto;
+      max-height: 60vh;
+      background: white;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+      /* Ajuda a manter o layout Excel */
+    }
+
+    td {
+      border: 1px solid var(--border-color);
+      padding: 10px 12px;
+      min-width: 120px;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    td:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--primary);
+      z-index: 10;
+      position: relative;
+    }
+
+    /* --- Features Section --- */
+    .features {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      padding: 40px 0;
+    }
+
+    .feature-item {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .feature-item h3 {
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    /* Scrollbar Custom */
+    .table-container::-webkit-scrollbar {
+      height: 10px;
+      width: 10px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <h1>Spreadsheet Editor</h1>
+      <p>Edit, manage and export your CSV files with an intuitive Excel-like interface.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="editor-card">
+      <div class="toolbar">
+        <label class="file-upload">
+          <span>📂</span> Open CSV
+          <input type="file" id="fileInput" accept=".csv" hidden />
+        </label>
+
+        <button onclick="addRow()"><span>➕</span> Row</button>
+        <button onclick="addColumn()"><span>➕</span> Column</button>
+        <button class="primary-btn" onclick="downloadCSV()"><span>💾</span> Save & Download</button>
+        <button class="danger" onclick="clearTable()"><span>🗑️</span> Reset</button>
+      </div>
+
+      <div class="table-container">
+        <table id="csvTable"></table>
+      </div>
+    </div>
+
+    <section class="features">
+      <div class="feature-item">
+        <h3>🚀 Fast Editing</h3>
+        <p>Edit cells, add rows and columns with the same fluid experience of a desktop app.</p>
+      </div>
+      <div class="feature-item">
+        <h3>🔒 Privacy First</h3>
+        <p>Your data stays in your browser. We don't store your CSV content on our servers.</p>
+      </div>
+      <div class="feature-item">
+        <h3>💾 Auto-Save</h3>
+        <p>Don't worry about losing progress. Your work is automatically cached in your browser.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const table = document.getElementById("csvTable");
+    const statusIndicator = document.getElementById("statusIndicator");
+
+    let spreadsheet = {
+      id: "spreadsheet",
+      data: [["", "", ""], ["", "", ""]]
+    };
+
+    function saveLocal() {
+      localStorage.setItem("spreadsheet", JSON.stringify(spreadsheet));
+    }
+
+    function loadLocal() {
+      const saved = localStorage.getItem("spreadsheet");
+      if (saved) {
+        spreadsheet = JSON.parse(saved);
+        renderTable();
+      } else {
+        renderTable();
+      }
+    }
+
+    function renderTable() {
+      table.innerHTML = "";
+      if (!Array.isArray(spreadsheet.data)) spreadsheet.data = [];
+
+      spreadsheet.data.forEach((row, r) => {
+        const tr = document.createElement("tr");
+        row.forEach((cell, c) => {
+          const td = document.createElement("td");
+          td.contentEditable = true;
+          td.textContent = cell;
+          td.addEventListener("input", () => {
+            spreadsheet.data[r][c] = td.textContent;
+            saveLocal();
+          });
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+    }
+
+    function toggleLoading(show) {
+      statusIndicator.style.display = show ? "block" : "none";
+    }
+
+    document.getElementById("fileInput").addEventListener("change", async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      toggleLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const res = await fetch("api/csv/upload", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!res.ok) throw new Error("Failed to upload file");
+
+        const data = await res.json();
+
+        spreadsheet.data = Array.isArray(data) ? data : (data.data || []);
+
+        saveLocal();
+        renderTable();
+      } catch (err) {
+        console.error(err);
+        alert("Error uploading CSV. Make sure the backend is running.");
+      } finally {
+        toggleLoading(false);
+      }
+    });
+
+    async function downloadCSV() {
+      toggleLoading(true);
+      try {
+        const res = await fetch("/api/csv/download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(spreadsheet)
+        });
+
+        if (!res.ok) throw new Error("Error generating CSV on server");
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "edited_spreadsheet.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error(err);
+        alert("Connection error with backend.");
+      } finally {
+        toggleLoading(false);
+      }
+    }
+
+    function addRow() {
+      const cols = spreadsheet.data[0]?.length || 1;
+      spreadsheet.data.push(Array(cols).fill(""));
+      renderTable();
+      saveLocal();
+    }
+
+    function addColumn() {
+      spreadsheet.data.forEach(row => row.push(""));
+      renderTable();
+      saveLocal();
+    }
+
+    function clearTable() {
+      if (confirm("Reset everything? Your progress will be lost.")) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+
+    loadLocal();
+  </script>
+</body>
+
+</html>
