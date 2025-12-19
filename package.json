@@ -4,7 +4,7 @@
   "description": "",
   "main": "api/server.ts",
   "scripts": {
-    "build": "npx tsc && copyfiles -u 1 src/templates/**/* dist/src/",
+    "build": "tsc && copyfiles -u 1 src/templates/**/* dist/src/",
     "dev": "npm run build && node dist/src/dev.js"
   },
   "keywords": [],
