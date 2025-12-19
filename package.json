@@ -4,7 +4,7 @@
   "description": "",
   "main": "api/server.ts",
   "scripts": {
-    "dev": "npx ts-node api/server.ts"
+    "dev": "npx ts-node src/dev.ts"
   },
   "keywords": [],
   "author": "",
