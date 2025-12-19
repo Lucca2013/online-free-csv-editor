@@ -1,6 +1,13 @@
 {
   "version": 2,
-  "routes": [
-    { "src": "/(.*)", "dest": "/api/server.ts" }
+  "public": true,
+  "cleanUrls": true,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/dist/(.*)",
+      "destination": "/api/server.js"
+    }
   ]
 }

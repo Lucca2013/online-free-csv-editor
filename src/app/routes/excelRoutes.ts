@@ -5,7 +5,7 @@
 import { Router } from "express";
 
 //excel controller
-import excelController from "../controllers/excelController.ts";
+import excelController from "../controllers/excelController.js";
 
 //libraly to upload files (in this case, the .csv)
 import multer from 'multer';

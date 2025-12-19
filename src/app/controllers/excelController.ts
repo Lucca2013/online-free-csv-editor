@@ -4,7 +4,7 @@
 
 //excel service
 import { afterEach } from "node:test";
-import excelServices from "../services/excelServices.ts";
+import excelServices from "../services/excelServices.js";
 
 export default {
     //upload csv endpoint

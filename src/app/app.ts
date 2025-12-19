@@ -7,8 +7,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 //routes controllers
-import excelRoutes from "./routes/excelRoutes.ts";
-import frontendRoutes from "./routes/frontendRoutes.ts";
+import excelRoutes from "./routes/excelRoutes.js";
+import frontendRoutes from "./routes/frontendRoutes.js";
 
 const app = express();
 

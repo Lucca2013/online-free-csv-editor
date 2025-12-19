@@ -2,7 +2,7 @@
 // dev.ts, the developement server
 // ===========================
 
-import app from "./app/app.ts";
+import app from "./app/app.js";
 
 const PORT = 3000;
 
